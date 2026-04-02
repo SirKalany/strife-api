@@ -18,4 +18,11 @@ public class FamilyService {
                 .map(f -> new FamilyDto(f.getId(), f.getSlug(), f.getName(), f.getImageUrl(), f.getDescription()))
                 .toList();
     }
+
+    public List<FamilyDto> getAllFamilies() {
+        return familyRepository.findAll()
+                .stream()
+                .map(f -> new FamilyDto(f.getId(), f.getSlug(), f.getName(), f.getImageUrl(), f.getDescription()))
+                .toList();
+    }
 }

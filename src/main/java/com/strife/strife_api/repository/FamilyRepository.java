@@ -10,7 +10,8 @@ public interface FamilyRepository extends JpaRepository<Family, UUID> {
     Optional<Family> findBySlug(String slug);
 
     List<Family> findByDomainSlugAndCountrySlugOrderByName(
-        String domainSlug,
-        String countrySlug
-    );
+            String domainSlug,
+            String countrySlug);
+
+    List<Family> findByCountrySlug(String countrySlug);
 }

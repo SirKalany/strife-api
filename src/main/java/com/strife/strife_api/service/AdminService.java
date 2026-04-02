@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 
 @Service
@@ -35,6 +34,18 @@ public class AdminService {
     public void deleteCountry(String slug) {
         Country country = countryRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Country not found"));
+
+        // Delete all families and their models for this country
+        List<Family> families = familyRepository.findByCountrySlug(slug);
+        for (Family family : families) {
+            List<Model> models = modelRepository.findByFamilySlugOrderByYearIntroduced(family.getSlug());
+            for (Model model : models) {
+                operatorRepository.deleteByModel(model);
+                modelRepository.delete(model);
+            }
+            familyRepository.delete(family);
+        }
+
         countryRepository.delete(country);
     }
 
@@ -60,6 +71,14 @@ public class AdminService {
     public void deleteFamily(String slug) {
         Family family = familyRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Family not found"));
+
+        // Delete all models and their operators in this family
+        List<Model> models = modelRepository.findByFamilySlugOrderByYearIntroduced(slug);
+        for (Model model : models) {
+            operatorRepository.deleteByModel(model);
+            modelRepository.delete(model);
+        }
+
         familyRepository.delete(family);
     }
 

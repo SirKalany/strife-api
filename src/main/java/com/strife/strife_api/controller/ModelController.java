@@ -22,4 +22,9 @@ public class ModelController {
     public ModelDetailDto getModel(@PathVariable String model) {
         return modelService.getModelBySlug(model);
     }
+
+    @GetMapping("/api/models")
+    public List<ModelSummaryDto> getAllModels() {
+        return modelService.getAllModels();
+    }
 }

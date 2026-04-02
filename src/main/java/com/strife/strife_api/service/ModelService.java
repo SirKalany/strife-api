@@ -60,4 +60,16 @@ public class ModelService {
                                                 model.getFamily().getDescription()),
                                 operators);
         }
+
+        public List<ModelSummaryDto> getAllModels() {
+                return modelRepository.findAll()
+                                .stream()
+                                .map(m -> new ModelSummaryDto(
+                                                m.getSlug(),
+                                                m.getName(),
+                                                m.getYearIntroduced(),
+                                                m.getYearRetired(),
+                                                m.getImageUrl()))
+                                .toList();
+        }
 }

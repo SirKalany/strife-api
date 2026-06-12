@@ -67,6 +67,18 @@ public class AdminService {
         return familyRepository.save(family);
     }
 
+    public Family updateFamily(String slug, FamilyRequest req) {
+        Family family = familyRepository.findBySlug(slug)
+                .orElseThrow(() -> new RuntimeException("Family not found"));
+
+        family.setName(req.getName());
+        family.setSlug(req.getSlug());
+        family.setImageUrl(req.getImageUrl());
+        family.setDescription(req.getDescription());
+
+        return familyRepository.save(family);
+    }
+
     @Transactional
     public void deleteFamily(String slug) {
         Family family = familyRepository.findBySlug(slug)

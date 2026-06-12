@@ -35,6 +35,13 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createFamily(req));
     }
 
+    @PutMapping("/families/{slug}")
+    public ResponseEntity<Family> updateFamily(
+            @PathVariable String slug,
+            @RequestBody FamilyRequest req) {
+        return ResponseEntity.ok(adminService.updateFamily(slug, req));
+    }
+
     @DeleteMapping("/families/{slug}")
     public ResponseEntity<Void> deleteFamily(@PathVariable String slug) {
         adminService.deleteFamily(slug);

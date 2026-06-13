@@ -24,6 +24,12 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return !path.startsWith("/api/admin/") || path.equals("/api/admin/auth/login");
+    }
+
+    @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
@@ -38,11 +44,20 @@ public class JwtFilter extends OncePerRequestFilter {
 
         final String token = authHeader.substring(7);
 
-        if (jwtService.isTokenValid(token)) {
-            String username = jwtService.extractUsername(token);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
-                    List.of());
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        try {
+            if (jwtService.isTokenValid(token)) {
+                String username = jwtService.extractUsername(token);
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                        username, null, List.of());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         filterChain.doFilter(request, response);

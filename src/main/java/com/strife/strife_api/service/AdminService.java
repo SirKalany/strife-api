@@ -69,12 +69,19 @@ public class AdminService {
 
     public Family updateFamily(String slug, FamilyRequest req) {
         Family family = familyRepository.findBySlug(slug)
-                .orElseThrow(() -> new RuntimeException("Family not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Family not found"));
 
-        family.setName(req.getName());
-        family.setSlug(req.getSlug());
-        family.setImageUrl(req.getImageUrl());
-        family.setDescription(req.getDescription());
+        if (req.getName() != null) {
+            family.setName(req.getName());
+        }
+
+        if (req.getImageUrl() != null) {
+            family.setImageUrl(req.getImageUrl());
+        }
+
+        if (req.getDescription() != null) {
+            family.setDescription(req.getDescription());
+        }
 
         return familyRepository.save(family);
     }

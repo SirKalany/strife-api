@@ -27,9 +27,11 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/admin/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/admin/auth/login").permitAll()
+                        .requestMatchers("/api/admin/**").authenticated()
+                        .requestMatchers("/api/**").permitAll()
+                        .anyRequest().denyAll())
+
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
